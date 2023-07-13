@@ -217,6 +217,7 @@ class EncoderApp(nn.Module):
         self.w_dim = w_dim
         log_size = int(math.log(size, 2))
 
+        self.size = size
         self.convs = nn.ModuleList()
         self.convs.append(ConvLayer(3, channels[size], 1))
 
@@ -232,6 +233,10 @@ class EncoderApp(nn.Module):
 
         res = []
         h = x
+
+        if not self.training:
+            h = F.interpolate(h, size=self.size, mode='bicubic')
+
         for conv in self.convs:
             h = conv(h)
             res.append(h)
